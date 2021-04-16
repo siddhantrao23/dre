@@ -151,6 +151,7 @@ int match_char_class(char c, char *class) {
 int main() {
     char text[4001];
     char pattern[1001];
+
     int i = 0;
     while ((text[i] = getchar()) !='\n') {
         ++i;
