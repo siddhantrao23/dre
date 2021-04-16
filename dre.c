@@ -1,54 +1,24 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "dre.h"
 
-#define MAX_LEN 1001
-#define MAX_CHAR_CLASS 10 // for a-zA-Z0-9
-
-typedef struct reg {
-    int type;
-    union {
-        char ch;
-        char *ch_class;
-    };
-    struct reg *next;
-} reg_t;
-
-typedef struct llist {
-    reg_t *head;
-} list_t;
-
-enum { DOT, CARET, DOLLAR, QUESTION, STAR, PLUS, CHAR, CHAR_CLASS, DIGIT, ALPHA, EOP };
-
-// function declarations
-int match_here(reg_t *, char *, int *);
-int match_one(reg_t *, char);
-int match_star(reg_t *, reg_t *, char *, int *);
-int match_star_lazy(reg_t *, reg_t *, char *, int *);
-int match_plus(reg_t *, reg_t *, char *, int *);
-int match_question(reg_t *, reg_t *, char *, int *);
-
-int match_char_class(char, char *);
-
-reg_t *new_reg(int type) {
-    reg_t *new = (reg_t *)malloc(sizeof(reg_t));
+struct reg_t *new_reg(int type) {
+    struct reg_t *new = (struct reg_t *)malloc(sizeof(reg_t));
     new->type = type;
     new->next = NULL;
 
     return new;
 }
 
-list_t* pre_process(char *pattern) {
-    list_t *list = (list_t *)malloc(sizeof(list_t));
+struct list_t* pre_process(char *pattern) {
+    struct list_t *list = (struct list_t *)malloc(sizeof(struct list_t));
     list->head = NULL;
-    reg_t *curr = list->head;
+    struct reg_t *curr = list->head;
 
     char c;
     char buffer[MAX_CHAR_CLASS];
     int buf_idx = 0;
     for (int i = 0; pattern[i] != '\0'; ++i) {
         c = pattern[i];
-        reg_t *new;
+        struct reg_t *new;
         switch(c) {
             case '^': {
                 new = new_reg(CARET);
@@ -101,7 +71,7 @@ list_t* pre_process(char *pattern) {
             curr = new;
         }
     }
-    reg_t *last_node = new_reg(EOP);
+    struct reg_t *last_node = new_reg(EOP);
     if(curr == NULL) {
         list->head = last_node;
     } else {
@@ -111,8 +81,8 @@ list_t* pre_process(char *pattern) {
     return list;
 }
 
-void print_l(list_t *l) {
-    reg_t *reg = l->head;
+void print_l(struct list_t *l) {
+    struct reg_t *reg = l->head;
     const char* types[] = {"DOT", "CARET", "DOLLAR", "QUESTION", "STAR", "PLUS", "CHAR", "CHAR_CLASS", "DIGIT", "ALPHA", "EOP" };
 
     while (reg != NULL) {
@@ -127,9 +97,9 @@ void print_l(list_t *l) {
     }
 }
 
-void free_l(list_t *l) {
-    reg_t *reg = l->head;
-    reg_t *del;
+void free_l(struct list_t *l) {
+    struct reg_t *reg = l->head;
+    struct reg_t *del;
     while (reg != NULL) {
         if (reg->type == CHAR_CLASS) {
             free(reg->ch_class);
@@ -142,8 +112,8 @@ void free_l(list_t *l) {
 }
 
 void match(char *pattern, char *text) {
-    list_t *l = pre_process(pattern);
-    reg_t *curr = l->head;
+    struct list_t *l = pre_process(pattern);
+    struct reg_t *curr = l->head;
 
     int found = 0;
     int beg = -1;
@@ -173,9 +143,9 @@ void match(char *pattern, char *text) {
     free_l(l);
 }
 
-int match_here(reg_t *curr, char *text, int *end) {
-    reg_t *prev = NULL;
-    reg_t *next = NULL;
+int match_here(struct reg_t *curr, char *text, int *end) {
+    struct reg_t *prev = NULL;
+    struct reg_t *next = NULL;
     int pre = *end;
     do {
         prev = curr;
@@ -209,7 +179,7 @@ int match_here(reg_t *curr, char *text, int *end) {
     return 0;
 }
 
-int match_one(reg_t *curr, char c) {
+int match_one(struct reg_t *curr, char c) {
     switch (curr->type) {
         case DOT: return 1;
         case CHAR_CLASS: return match_char_class(c, curr->ch_class);
@@ -221,7 +191,7 @@ int match_one(reg_t *curr, char c) {
     }
 }
 
-int match_star(reg_t *curr, reg_t *n_next, char *text, int *end) {
+int match_star(struct reg_t *curr, struct reg_t *n_next, char *text, int *end) {
     char *t;
     int pre = *end;
     for (t = text; *t != '\0' && match_one(curr, *t); ++t) {
@@ -238,7 +208,7 @@ int match_star(reg_t *curr, reg_t *n_next, char *text, int *end) {
     return 0;
 }
 
-int match_star_lazy(reg_t *curr, reg_t *n_next, char *text, int *end) {
+int match_star_lazy(struct reg_t *curr, struct reg_t *n_next, char *text, int *end) {
     int pre = *end;
     do {
         if (match_here(n_next, text, end))
@@ -248,7 +218,7 @@ int match_star_lazy(reg_t *curr, reg_t *n_next, char *text, int *end) {
     return 0;
 }
 
-int match_plus(reg_t *curr, reg_t *n_next, char *text, int *end) {
+int match_plus(struct reg_t *curr, struct reg_t *n_next, char *text, int *end) {
     char *t;
     for (t = text; *t != '\0' && match_one(curr, *t); ++t) {
         (*end)++;
@@ -262,7 +232,7 @@ int match_plus(reg_t *curr, reg_t *n_next, char *text, int *end) {
     return 0;
 }
 
-int match_question(reg_t *curr, reg_t *n_next, char *text, int *end) {
+int match_question(struct reg_t *curr, struct reg_t *n_next, char *text, int *end) {
     if (curr->type == EOP || match_here(n_next, text, end)) {
         return 1;
     }
@@ -308,7 +278,7 @@ int main() {
         }
         pattern[i] = '\0';
 
-        list_t *l = pre_process(pattern);
+        struct list_t *l = pre_process(pattern);
         // print_l(l);
         match(pattern, text);
         free_l(l);
