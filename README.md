@@ -16,6 +16,6 @@ Dreadful Regex Engine
 # Usage
 The engine provides a match function used as:
 ```
-void match(char *pattern, char *text)
+void match(char *pattern, char *text);
 ```
 It furthur compiles the regex pattern into a form usable in the next stages. 
