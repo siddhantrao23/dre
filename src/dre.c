@@ -166,8 +166,8 @@ int main() {
     }
     pattern[i] = '\0';
 
-    struct list_t *l = pre_process(pattern);
+    struct list_t *l = regcomp(pattern);
     print_l(l);
-    // match(pattern, text);
+    match(pattern, text);
     free_l(l);
 }

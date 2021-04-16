@@ -2,7 +2,7 @@
 #include "list.h"
 
 struct reg_t* regnew(int type) {
-    struct reg_t *new = (struct reg_t *)malloc(sizeof(struct reg_t));
+    struct reg_t *new = malloc(sizeof(struct reg_t));
     new->type = type;
     new->next = NULL;
 
@@ -23,31 +23,31 @@ struct list_t* regcomp(char *pattern) {
         struct reg_t *new;
         switch(c) {
             case '^': {
-                new = new_reg(CARET);
+                new = regnew(CARET);
             } break;
             case '$': {
-                new = new_reg(DOLLAR);
+                new = regnew(DOLLAR);
             } break;
             case '.': {
-                new = new_reg(DOT);
+                new = regnew(DOT);
             } break;
             case '*': {
-                new = new_reg(STAR);
+                new = regnew(STAR);
             } break;
             case '+': {
-                new = new_reg(PLUS);
+                new = regnew(PLUS);
             } break;
             case '?': {
-                new = new_reg(QUESTION);
+                new = regnew(QUESTION);
             } break;
             case '\\': {
                 i++;
                 switch(pattern[i]) {
                     case 'd': {
-                        new = new_reg(DIGIT);
+                        new = regnew(DIGIT);
                     } break;
                     case 'w': {
-                        new = new_reg(ALPHA);
+                        new = regnew(ALPHA);
                     } break;
                 }
             } break;
@@ -56,12 +56,12 @@ struct list_t* regcomp(char *pattern) {
                     buffer[buf_idx++] = pattern[i];
                 }
                 buffer[buf_idx] = '\0';
-                new = new_reg(CHAR_CLASS);
+                new = regnew(CHAR_CLASS);
                 new->ch_class = strdup(buffer);
                 buf_idx = 0;
             } break;
             default: {
-                new = new_reg(CHAR);
+                new = regnew(CHAR);
                 new->ch = c;
             }
         }
@@ -73,7 +73,7 @@ struct list_t* regcomp(char *pattern) {
             curr = new;
         }
     }
-    struct reg_t *last_node = new_reg(EOP);
+    struct reg_t *last_node = regnew(EOP);
     if(curr == NULL) {
         list->head = last_node;
     } else {

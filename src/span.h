@@ -1,7 +1,7 @@
 #ifndef __SPAN_H_
 #define __SPAN_H_
 
-#include <stdio.h>
+#include <stdlib.h>
 
 struct span_t
 {
