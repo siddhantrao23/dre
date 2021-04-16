@@ -31,7 +31,6 @@ void match(char *pattern, char *text) {
         else
             printf("%d %d %d\n", found, beg, beg + end);
     }
-
     free_l(l);
 }
 
@@ -166,8 +165,8 @@ int main() {
     }
     pattern[i] = '\0';
 
-    struct list_t *l = regcomp(pattern);
-    print_l(l);
+    // struct list_t *l = regcomp(pattern);
+    // print_l(l);
     match(pattern, text);
-    free_l(l);
+    // free_l(l);
 }
