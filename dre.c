@@ -1,7 +1,7 @@
 #include "dre.h"
 
 struct reg_t *new_reg(int type) {
-    struct reg_t *new = (struct reg_t *)malloc(sizeof(reg_t));
+    struct reg_t *new = (struct reg_t *)malloc(sizeof(struct reg_t));
     new->type = type;
     new->next = NULL;
 
@@ -261,26 +261,22 @@ int match_char_class(char c, char *class) {
 int main() {
     char text[4001];
     char pattern[1001];
-    int m;
+
     int i = 0;
     while ((text[i] = getchar()) !='\n') {
         ++i;
     }
     text[i] = '\0';
 
-    m = getchar() - '0';
-    getchar();
-
-    for (int t = 0; t<m; ++t) {
-        i = 0;
-        while ((pattern[i] = getchar()) !='\n') {
-            ++i;
-        }
-        pattern[i] = '\0';
-
-        struct list_t *l = pre_process(pattern);
-        // print_l(l);
-        match(pattern, text);
-        free_l(l);
+    i = 0;
+    while ((pattern[i] = getchar()) !='\n') {
+        ++i;
     }
+    pattern[i] = '\0';
+
+    // printf("%s\n%s\n", text, pattern);
+    struct list_t *list = pre_process(pattern);
+    print_l(list);
+    // match(pattern, text);
+    // free_l(l);
 }

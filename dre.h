@@ -14,7 +14,7 @@ struct reg_t {
         char ch;
         char *ch_class;
     };
-    struct reg *next;
+    struct reg_t *next;
 };
 
 struct list_t {
@@ -33,5 +33,8 @@ int match_question(struct reg_t *, struct reg_t *, char *, int *);
 int match_char_class(char, char *);
 
 struct reg_t *new_reg(int type);
+struct list_t* pre_process(char *pattern);
+void print_l(struct list_t *l);
+void free_l(struct list_t *l);
 
 #endif // __DRE_H_
