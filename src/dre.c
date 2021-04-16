@@ -1,10 +1,12 @@
 #include "dre.h"
 #include "util.h"
+#include "span.h"
 
 void match(char *pattern, char *text) {
-    struct list_t *l = pre_process(pattern);
+    struct list_t *l = regcomp(pattern);
     struct reg_t *curr = l->head;
 
+    struct span_t *span = spannew(text);
     int found = 0;
     int beg = -1;
     int end = -1;

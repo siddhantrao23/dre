@@ -1,7 +1,7 @@
 #include "util.h"
 #include "list.h"
 
-struct reg_t *regnew(int type) {
+struct reg_t* regnew(int type) {
     struct reg_t *new = (struct reg_t *)malloc(sizeof(struct reg_t));
     new->type = type;
     new->next = NULL;
@@ -10,7 +10,7 @@ struct reg_t *regnew(int type) {
 }
 
 // traverse the pattern and compile it into usable format
-struct list_t* regcompile(char *pattern) {
+struct list_t* regcomp(char *pattern) {
     struct list_t *list = (struct list_t *)malloc(sizeof(struct list_t));
     list->head = NULL;
     struct reg_t *curr = list->head;
@@ -79,7 +79,6 @@ struct list_t* regcompile(char *pattern) {
     } else {
         curr->next = last_node;
     }
-
     return list;
 }
 
