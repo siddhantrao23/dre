@@ -1,5 +1,4 @@
-# dre
-Dreadful Regex Engine
+# Dreadful Regex Engine
 
 # Cases Handled
 
